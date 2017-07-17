@@ -24,4 +24,5 @@ $ python3 analyzer.py
 ```
 ## See the results! 
 Find the file that was produced in the same folder as the program. It will be named, `lineup_analyzer`.
-Scroll through different tabs of excel file to see best 5 player combinations, 4 player combinations, 3 player combinations, 2 player combinations and individual players.
+
+Scroll through the different tabs of the excel file to see the best 5-player combinations, 4-player combinations, 3-player combinations, 2-player combinations and individual players.
