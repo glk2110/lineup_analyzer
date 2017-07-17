@@ -1,5 +1,5 @@
-# How to use
-## If you haven't already, install homebrew and Python.
+# How to Use
+## If you haven't already, install Homebrew and Python.
 1. Open Terminal, copy this line into the command prompt and click enter. Follow any instructions that appear.
 ```
 $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
