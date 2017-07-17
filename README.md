@@ -6,13 +6,13 @@ $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/maste
 ```
 2. Run the following line in Terminal to ensure homebrew was installed correctly.
 ```
-brew doctor
+$ brew doctor
 ```
 If you see the message, `Your system is ready to brew`, you are good to continue.
 
 3. In Terminal, copy the following line into the command prompt and click enter.
 ```
-brew install python3
+$ brew install python3
 ```
 
 ## Run the program!
@@ -20,7 +20,7 @@ brew install python3
 
 2. In Terminal, copy the following line into the command prompt and click enter.
 ```
-python3 analyzer.py
+$ python3 analyzer.py
 ```
 ## See the results! 
 Find the files that were produced in the same folder as the program. They will be named, `5_player_lineups`, `4_player_lineups`, `3_player_lineups`, `2_player_lineups`, and `individual_players`
