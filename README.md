@@ -23,4 +23,5 @@ $ brew install python3
 $ python3 analyzer.py
 ```
 ## See the results! 
-Find the files that were produced in the same folder as the program. They will be named, `5_player_lineups`, `4_player_lineups`, `3_player_lineups`, `2_player_lineups`, and `individual_players`
+Find the file that was produced in the same folder as the program. It will be named, `lineup_analyzer`.
+Scroll through different tabs of excel file to see best 5 player combinations, 4 player combinations, 3 player combinations, 2 player combinations and individual players.
