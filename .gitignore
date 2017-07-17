@@ -102,3 +102,7 @@ ENV/
 
 #XML file
 *.XML
+
+#random files
+GPR cuwbb.xlsx
+vba_version_cuwbb
