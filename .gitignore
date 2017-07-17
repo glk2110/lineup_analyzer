@@ -106,3 +106,4 @@ ENV/
 #random files
 GPR cuwbb.xlsx
 vba_version_cuwbb
+.DS_Store
