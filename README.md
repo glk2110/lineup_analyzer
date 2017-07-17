@@ -26,6 +26,7 @@ For example, if your team name is Columbia, you will run
 ```
 $ python3 analyzer.py Columbia
 ```
+Note: If unsure about your proper team name, open the XML file and use the name your team goes by in the file. 
 ## See the results! 
 Find the file that was produced in the same folder as the program. It will be named, `lineup_analyzer`.
 
