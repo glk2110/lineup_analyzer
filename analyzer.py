@@ -74,6 +74,15 @@ if __name__ == '__main__':
 						elif play.attrib.get('action') == 'TURNOVER':
 							tos += 1
 						elif play.attrib.get('action') == 'SUB':
+							currL = ''.join(arr)
+							stats5.update({currL: {'pts': stats5.get(currL).get('pts') + pts if stats5.get(currL) else pts, 
+																		'ptsa': stats5.get(currL).get('ptsa') + ptsa if stats5.get(currL) else ptsa, 
+																		'rebs': stats5.get(currL).get('rebs') + rebs if stats5.get(currL) else rebs, 
+																		'assts': stats5.get(currL).get('assts') + assts if stats5.get(currL) else assts, 
+																		'stls': stats5.get(currL).get('stls') + stls if stats5.get(currL) else stls, 
+																		'blks': stats5.get(currL).get('blks') + blks if stats5.get(currL) else blks, 
+																		'tos': stats5.get(currL).get('tos') + tos if stats5.get(currL) else tos}})
+							print(stats5)
 							pts = 0
 							ptsa = 0
 							rebs = 0
