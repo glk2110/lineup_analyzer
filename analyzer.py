@@ -64,7 +64,8 @@ if __name__ == '__main__':
 								ptsa += 2
 					elif play.attrib.get('team') == myTeam:
 						if play.attrib.get('action') == 'REBOUND':
-							rebs += 1
+							if play.attrib.get('type') != 'DEADB':
+								rebs += 1
 						elif play.attrib.get('action') == 'ASSIST':
 							assts += 1
 						elif play.attrib.get('action') == 'STEAL':
