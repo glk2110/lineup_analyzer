@@ -1,10 +1,18 @@
-#https://docs.python.org/3/library/xml.etree.elementtree.html
+#--------------- Basketball Line-up Analyzer --------------------
+# Author- Gabriel Kramer-Garcia
+# Finds the most efficient player combinations based on
+# play-by-play from XML game files automatically produced 
+# after every NCAA Division I basketball game. 
+# Originally designed for Columbia Women's Basketball team
+#----------------------------------------------------------------
+
 import xml.etree.ElementTree as ET
 from pathlib import Path
+import sys
 
-#~~~~~~~~~~~~~~~~ CHANGE DEFAULT VALUES HERE ~~~~~~~~~~~~~~~~~~~~
-teamName = 'Columbia'
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#---------------- CHANGE DEFAULT VALUE HERE --------------------
+teamName = sys.argv[1]
+#----------------------------------------------------------------
 
 output = {}
 
