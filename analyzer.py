@@ -10,11 +10,12 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 import sys
 
-#---------------- CHANGE DEFAULT VALUE HERE --------------------
 teamName = sys.argv[1]
-#----------------------------------------------------------------
-
-output = {}
+stats1 = {}
+stats2 = {}
+stats3 = {}
+stats4 = {}
+stats5 = {}
 
 def getStarters(root):
 	starters = []
