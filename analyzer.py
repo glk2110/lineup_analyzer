@@ -74,7 +74,6 @@ if __name__ == '__main__':
 						elif play.attrib.get('action') == 'TURNOVER':
 							tos += 1
 						elif play.attrib.get('action') == 'SUB':
-							print(pts, ptsa, rebs, assts, stls, blks, tos)
 							pts = 0
 							ptsa = 0
 							rebs = 0
