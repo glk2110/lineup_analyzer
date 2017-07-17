@@ -18,9 +18,13 @@ $ brew install python3
 ## Run the program!
 1. Place all XML the game files you want to include (and no more) into same folder as `analyzer.py`.
 
-2. In Terminal, copy the following line into the command prompt and click enter.
+2. In Terminal, copy the following line into the command prompt and replace <team_name> with the name of your team. Then click enter.
 ```
-$ python3 analyzer.py
+$ python3 analyzer.py <team_name>
+```
+For example, if your team name is Columbia, you will run
+```
+$ python3 analyzer.py Columbia
 ```
 ## See the results! 
 Find the file that was produced in the same folder as the program. It will be named, `lineup_analyzer`.
