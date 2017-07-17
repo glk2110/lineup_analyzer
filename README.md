@@ -1,5 +1,5 @@
 # Basketball Line-up Analyzer
-Find the ost efficient combinations of players from XML files automatically produced after every NCAA Division I basketball game.
+Find the most efficient combinations of players from XML files automatically produced after every NCAA Division I basketball game.
 ## How to Use
 ### If you haven't already, install Homebrew and Python.
 1. Open Terminal, copy this line into the command prompt and click enter. Follow any instructions that appear.
