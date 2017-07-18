@@ -46,13 +46,7 @@ if __name__ == '__main__':
 			root = tree.getroot()
 			arr = getStarters(root)
 			myTeam = getMyTeam()
-			pts = 0
-			ptsa = 0
-			rebs = 0
-			assts = 0
-			stls = 0
-			blks = 0
-			tos = 0
+			pts = ptsa = rebs = asts = stls = blks = tos = 0
 			mins = 0.
 			for period in root.iter('period'):
 				for play in period.iter('play'):
@@ -85,11 +79,5 @@ if __name__ == '__main__':
 													'tos': stats5.get(currL).get('tos') + tos if stats5.get(currL) else tos,
 													'mins': stats5.get(currL).get('mins') + mins if stats5.get(currL) else mins}})
 							print(stats5)
-							pts = 0
-							ptsa = 0
-							rebs = 0
-							assts = 0
-							stls = 0
-							blks = 0
-							tos = 0
+							pts = ptsa = rebs = asts = stls = blks = tos = 0
 							mins = 0.
