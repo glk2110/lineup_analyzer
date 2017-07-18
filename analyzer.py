@@ -62,27 +62,28 @@ if __name__ == '__main__':
 						else:
 							ptsa += getNumPoints(play.attrib.get('type'))
 					elif play.attrib.get('team') == myTeam:
-						if play.attrib.get('action') == 'REBOUND':
+						action = play.attrib.get('action')
+						if action == 'REBOUND':
 							if play.attrib.get('type') != 'DEADB':
 								rebs += 1
-						elif play.attrib.get('action') == 'ASSIST':
+						elif action == 'ASSIST':
 							assts += 1
-						elif play.attrib.get('action') == 'STEAL':
+						elif action == 'STEAL':
 							stls += 1
-						elif play.attrib.get('action') == 'BLOCK':
+						elif action == 'BLOCK':
 							blks += 1
-						elif play.attrib.get('action') == 'TURNOVER':
+						elif action == 'TURNOVER':
 							tos += 1
-						elif play.attrib.get('action') == 'SUB':
+						elif action == 'SUB':
 							currL = ''.join(arr)
 							stats5.update({currL: {'pts': stats5.get(currL).get('pts') + pts if stats5.get(currL) else pts, 
-																		'ptsa': stats5.get(currL).get('ptsa') + ptsa if stats5.get(currL) else ptsa, 
-																		'rebs': stats5.get(currL).get('rebs') + rebs if stats5.get(currL) else rebs, 
-																		'assts': stats5.get(currL).get('assts') + assts if stats5.get(currL) else assts, 
-																		'stls': stats5.get(currL).get('stls') + stls if stats5.get(currL) else stls, 
-																		'blks': stats5.get(currL).get('blks') + blks if stats5.get(currL) else blks, 
-																		'tos': stats5.get(currL).get('tos') + tos if stats5.get(currL) else tos,
-																		'mins': stats5.get(currL).get('mins') + mins if stats5.get(currL) else mins}})
+													'ptsa': stats5.get(currL).get('ptsa') + ptsa if stats5.get(currL) else ptsa, 
+													'rebs': stats5.get(currL).get('rebs') + rebs if stats5.get(currL) else rebs, 
+													'assts': stats5.get(currL).get('assts') + assts if stats5.get(currL) else assts, 
+													'stls': stats5.get(currL).get('stls') + stls if stats5.get(currL) else stls, 
+													'blks': stats5.get(currL).get('blks') + blks if stats5.get(currL) else blks, 
+													'tos': stats5.get(currL).get('tos') + tos if stats5.get(currL) else tos,
+													'mins': stats5.get(currL).get('mins') + mins if stats5.get(currL) else mins}})
 							print(stats5)
 							pts = 0
 							ptsa = 0
