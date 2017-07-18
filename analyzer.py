@@ -23,7 +23,7 @@ def getStarters(root):
         if team.attrib.get('name') == teamName:
             for player in team.iter('player'):
                 if player.attrib.get('pos') != None:
-                    starters.append(player.attrib.get('uni'))
+                    starters.append(int(player.attrib.get('uni')))
     return starters
 
 def getMyTeam():
@@ -39,6 +39,21 @@ def getNumPoints(type):
     else:
         return 2
 
+def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
+    arr.sort()
+    arr2 = []
+    for num in arr:
+        arr2.append(str(num))
+    currL = ''.join(arr2)
+    stats5.update({currL: {'pts': stats5.get(currL).get('pts') + pts if stats5.get(currL) else pts, 
+                           'ptsa': stats5.get(currL).get('ptsa') + ptsa if stats5.get(currL) else ptsa, 
+                           'rebs': stats5.get(currL).get('rebs') + rebs if stats5.get(currL) else rebs, 
+                           'asts': stats5.get(currL).get('asts') + asts if stats5.get(currL) else asts, 
+                           'stls': stats5.get(currL).get('stls') + stls if stats5.get(currL) else stls, 
+                           'blks': stats5.get(currL).get('blks') + blks if stats5.get(currL) else blks, 
+                           'tos': stats5.get(currL).get('tos') + tos if stats5.get(currL) else tos,
+                           'mins': stats5.get(currL).get('mins') + mins if stats5.get(currL) else mins}})
+
 if __name__ == '__main__':
     for file in Path.cwd().iterdir():
         if file.suffix == '.XML':
@@ -48,6 +63,7 @@ if __name__ == '__main__':
             myTeam = getMyTeam()
             pts = ptsa = rebs = asts = stls = blks = tos = 0
             mins = 0.
+            dontSub = 0
             for period in root.iter('period'):
                 for play in period.iter('play'):
                     if play.attrib.get('action') == 'GOOD':
@@ -61,7 +77,7 @@ if __name__ == '__main__':
                             if play.attrib.get('type') != 'DEADB':
                                 rebs += 1
                         elif action == 'ASSIST':
-                            assts += 1
+                            asts += 1
                         elif action == 'STEAL':
                             stls += 1
                         elif action == 'BLOCK':
@@ -69,15 +85,22 @@ if __name__ == '__main__':
                         elif action == 'TURNOVER':
                             tos += 1
                         elif action == 'SUB':
-                            currL = ''.join(arr)
-                            stats5.update({currL: {'pts': stats5.get(currL).get('pts') + pts if stats5.get(currL) else pts, 
-                                                    'ptsa': stats5.get(currL).get('ptsa') + ptsa if stats5.get(currL) else ptsa, 
-                                                    'rebs': stats5.get(currL).get('rebs') + rebs if stats5.get(currL) else rebs, 
-                                                    'assts': stats5.get(currL).get('assts') + assts if stats5.get(currL) else assts, 
-                                                    'stls': stats5.get(currL).get('stls') + stls if stats5.get(currL) else stls, 
-                                                    'blks': stats5.get(currL).get('blks') + blks if stats5.get(currL) else blks, 
-                                                    'tos': stats5.get(currL).get('tos') + tos if stats5.get(currL) else tos,
-                                                    'mins': stats5.get(currL).get('mins') + mins if stats5.get(currL) else mins}})
-                            print(stats5)
-                            pts = ptsa = rebs = asts = stls = blks = tos = 0
-                            mins = 0.
+                            if dontSub == 0:
+                                updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
+                                if(arr == [12,13,20,21,32]):
+                                    print(pts, ptsa)
+                                pts = ptsa = rebs = asts = stls = blks = tos = 0
+                                mins = 0.
+                            if play.attrib.get('type') == 'IN':
+                                dontSub += 1
+                                arr.append(int(play.attrib.get('uni')))
+                            elif play.attrib.get('type') == 'OUT':
+                                dontSub -= 1
+                                arr.remove(int(play.attrib.get('uni')))
+                updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
+                if(arr == [12,13,20,21,32]):
+                    print(pts, ptsa, period.attrib.get('number'))
+                pts = ptsa = rebs = asts = stls = blks = tos = 0
+                mins = 0.
+                arr = getStarters(root)
+            print(stats5)
