@@ -18,26 +18,26 @@ stats4 = {}
 stats5 = {}
 
 def getStarters(root):
-	starters = []
-	for team in root.iter('team'):
-		if team.attrib.get('name') == teamName:
-			for player in team.iter('player'):
-				if player.attrib.get('pos') != None:
-					starters.append(player.attrib.get('uni'))
-	return starters
+    starters = []
+    for team in root.iter('team'):
+        if team.attrib.get('name') == teamName:
+            for player in team.iter('player'):
+                if player.attrib.get('pos') != None:
+                    starters.append(player.attrib.get('uni'))
+    return starters
 
 def getMyTeam():
-	for team in root.iter('team'):
-		if team.attrib.get('name') == teamName:
-			return team.attrib.get('id')
+    for team in root.iter('team'):
+        if team.attrib.get('name') == teamName:
+            return team.attrib.get('id')
 
 def getNumPoints(type):
-	if type == "FT":
-		return 1
-	elif type == "3PTR":
-		return 3
-	else:
-		return 2
+    if type == "FT":
+        return 1
+    elif type == "3PTR":
+        return 3
+    else:
+        return 2
 
 if __name__ == '__main__':
 	for file in Path.cwd().iterdir():
