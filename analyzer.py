@@ -87,8 +87,6 @@ if __name__ == '__main__':
                         elif action == 'SUB':
                             if dontSub == 0:
                                 updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
-                                if(arr == [12,13,20,21,32]):
-                                    print(pts, ptsa)
                                 pts = ptsa = rebs = asts = stls = blks = tos = 0
                                 mins = 0.
                             if play.attrib.get('type') == 'IN':
@@ -98,8 +96,6 @@ if __name__ == '__main__':
                                 dontSub -= 1
                                 arr.remove(int(play.attrib.get('uni')))
                 updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
-                if(arr == [12,13,20,21,32]):
-                    print(pts, ptsa, period.attrib.get('number'))
                 pts = ptsa = rebs = asts = stls = blks = tos = 0
                 mins = 0.
                 arr = getStarters(root)
