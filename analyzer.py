@@ -31,6 +31,14 @@ def getMyTeam():
 		if team.attrib.get('name') == teamName:
 			return team.attrib.get('id')
 
+def getNumPoints(type):
+	if type == "FT":
+		return 1
+	elif type == "3PTR":
+		return 3
+	else:
+		return 2
+
 if __name__ == '__main__':
 	for file in Path.cwd().iterdir():
 		if file.suffix == '.XML':
@@ -45,23 +53,14 @@ if __name__ == '__main__':
 			stls = 0
 			blks = 0
 			tos = 0
+			mins = 0.
 			for period in root.iter('period'):
 				for play in period.iter('play'):
 					if play.attrib.get('action') == 'GOOD':
 						if play.attrib.get('team') == myTeam:
-							if play.attrib.get('type') == "FT":
-								pts += 1
-							elif play.attrib.get('type') == "3PTR":
-								pts += 3
-							else:
-								pts += 2
+							pts += getNumPoints(play.attrib.get('type'))
 						else:
-							if play.attrib.get('type') == "FT":
-								ptsa += 1
-							elif play.attrib.get('type') == "3PTR":
-								ptsa += 3
-							else:
-								ptsa += 2
+							ptsa += getNumPoints(play.attrib.get('type'))
 					elif play.attrib.get('team') == myTeam:
 						if play.attrib.get('action') == 'REBOUND':
 							if play.attrib.get('type') != 'DEADB':
@@ -82,7 +81,8 @@ if __name__ == '__main__':
 																		'assts': stats5.get(currL).get('assts') + assts if stats5.get(currL) else assts, 
 																		'stls': stats5.get(currL).get('stls') + stls if stats5.get(currL) else stls, 
 																		'blks': stats5.get(currL).get('blks') + blks if stats5.get(currL) else blks, 
-																		'tos': stats5.get(currL).get('tos') + tos if stats5.get(currL) else tos}})
+																		'tos': stats5.get(currL).get('tos') + tos if stats5.get(currL) else tos,
+																		'mins': stats5.get(currL).get('mins') + mins if stats5.get(currL) else mins}})
 							print(stats5)
 							pts = 0
 							ptsa = 0
@@ -91,3 +91,4 @@ if __name__ == '__main__':
 							stls = 0
 							blks = 0
 							tos = 0
+							mins = 0.
