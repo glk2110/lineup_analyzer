@@ -101,4 +101,5 @@ if __name__ == '__main__':
             tree = ET.parse(file)
             root = tree.getroot()
             parseGame(root)
+            print(stats5)
             
