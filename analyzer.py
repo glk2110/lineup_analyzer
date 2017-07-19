@@ -41,10 +41,9 @@ def getNumPoints(type):
 
 def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
     arr.sort()
-    arr2 = []
+    currL = ''
     for num in arr:
-        arr2.append(str(num))
-    currL = ''.join(arr2)
+    	currL += str(num)
     stats5.update({currL: {'pts': stats5.get(currL).get('pts') + pts if stats5.get(currL) else pts, 
                            'ptsa': stats5.get(currL).get('ptsa') + ptsa if stats5.get(currL) else ptsa, 
                            'rebs': stats5.get(currL).get('rebs') + rebs if stats5.get(currL) else rebs, 
@@ -54,49 +53,53 @@ def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
                            'tos': stats5.get(currL).get('tos') + tos if stats5.get(currL) else tos,
                            'mins': stats5.get(currL).get('mins') + mins if stats5.get(currL) else mins}})
 
+def parseGame(root):
+    arr = getStarters(root)
+    myTeam = getMyTeam()
+    pts = ptsa = rebs = asts = stls = blks = tos = 0
+    mins = 0.
+    dontSub = 0
+    for period in root.iter('period'):
+        for play in period.iter('play'):
+            if play.attrib.get('action') == 'GOOD':
+                if play.attrib.get('team') == myTeam:
+                    pts += getNumPoints(play.attrib.get('type'))
+                else:
+                    ptsa += getNumPoints(play.attrib.get('type'))
+            elif play.attrib.get('team') == myTeam:
+                action = play.attrib.get('action')
+                if action == 'REBOUND':
+                    if play.attrib.get('type') != 'DEADB':
+                        rebs += 1
+                elif action == 'ASSIST':
+                    asts += 1
+                elif action == 'STEAL':
+                    stls += 1
+                elif action == 'BLOCK':
+                    blks += 1
+                elif action == 'TURNOVER':
+                    tos += 1
+                elif action == 'SUB':
+                    if dontSub == 0:
+                        updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
+                        pts = ptsa = rebs = asts = stls = blks = tos = 0
+                        mins = 0.
+                    if play.attrib.get('type') == 'IN':
+                        dontSub += 1
+                        arr.append(int(play.attrib.get('uni')))
+                    elif play.attrib.get('type') == 'OUT':
+                        dontSub -= 1
+                        arr.remove(int(play.attrib.get('uni')))
+        updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
+        pts = ptsa = rebs = asts = stls = blks = tos = 0
+        mins = 0.
+        arr = getStarters(root)
+    print(stats5)
+
 if __name__ == '__main__':
     for file in Path.cwd().iterdir():
         if file.suffix == '.XML':
             tree = ET.parse(file)
             root = tree.getroot()
-            arr = getStarters(root)
-            myTeam = getMyTeam()
-            pts = ptsa = rebs = asts = stls = blks = tos = 0
-            mins = 0.
-            dontSub = 0
-            for period in root.iter('period'):
-                for play in period.iter('play'):
-                    if play.attrib.get('action') == 'GOOD':
-                        if play.attrib.get('team') == myTeam:
-                            pts += getNumPoints(play.attrib.get('type'))
-                        else:
-                            ptsa += getNumPoints(play.attrib.get('type'))
-                    elif play.attrib.get('team') == myTeam:
-                        action = play.attrib.get('action')
-                        if action == 'REBOUND':
-                            if play.attrib.get('type') != 'DEADB':
-                                rebs += 1
-                        elif action == 'ASSIST':
-                            asts += 1
-                        elif action == 'STEAL':
-                            stls += 1
-                        elif action == 'BLOCK':
-                            blks += 1
-                        elif action == 'TURNOVER':
-                            tos += 1
-                        elif action == 'SUB':
-                            if dontSub == 0:
-                                updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
-                                pts = ptsa = rebs = asts = stls = blks = tos = 0
-                                mins = 0.
-                            if play.attrib.get('type') == 'IN':
-                                dontSub += 1
-                                arr.append(int(play.attrib.get('uni')))
-                            elif play.attrib.get('type') == 'OUT':
-                                dontSub -= 1
-                                arr.remove(int(play.attrib.get('uni')))
-                updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
-                pts = ptsa = rebs = asts = stls = blks = tos = 0
-                mins = 0.
-                arr = getStarters(root)
-            print(stats5)
+            parseGame(root)
+            
