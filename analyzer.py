@@ -42,9 +42,7 @@ def getNumPoints(type):
 
 def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
     arr.sort()
-    currL = ''
-    for num in arr:
-    	currL += str(num) + '-' if num != arr[-1] else str(num)
+    currL = ''.join(str(num) for num in arr)
     stats5.update({currL: {'pts': stats5.get(currL).get('pts') + pts if stats5.get(currL) else pts, 
                            'ptsa': stats5.get(currL).get('ptsa') + ptsa if stats5.get(currL) else ptsa, 
                            'rebs': stats5.get(currL).get('rebs') + rebs if stats5.get(currL) else rebs, 
@@ -53,9 +51,7 @@ def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
                            'blks': stats5.get(currL).get('blks') + blks if stats5.get(currL) else blks, 
                            'tos': stats5.get(currL).get('tos') + tos if stats5.get(currL) else tos,
                            'mins': stats5.get(currL).get('mins') + mins if stats5.get(currL) else mins}})
-
-def findCombos(stats5, lineupSize):
-    return {}
+    #use itertools.combinations to get combos of 4,3,2 and 1 player and loop thru them and update each
 
 def parseGame(root):
     arr = getStarters(root)
@@ -107,8 +103,4 @@ if __name__ == '__main__':
             tree = ET.parse(file)
             root = tree.getroot()
             parseGame(root)
-    stats4 = findCombos(stats5, 4)
-    stats3 = findCombos(stats5, 3)
-    stats2 = findCombos(stats5, 2)
-    stats1 = findCombos(stats5, 1)
     print(stats5, stats4, stats3, stats2, stats1)
