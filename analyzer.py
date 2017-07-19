@@ -99,7 +99,6 @@ def parseGame(root):
         mins = datetime.strptime(lastSub, '%M:%S') - datetime.strptime("00:00", '%M:%S')
         updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
         pts = ptsa = rebs = asts = stls = blks = tos = 0
-        mins = 0.
         arr = getStarters(root)
 
 if __name__ == '__main__':
