@@ -94,7 +94,6 @@ def parseGame(root):
         pts = ptsa = rebs = asts = stls = blks = tos = 0
         mins = 0.
         arr = getStarters(root)
-    print(stats5)
 
 if __name__ == '__main__':
     for file in Path.cwd().iterdir():
