@@ -44,7 +44,7 @@ def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
     arr.sort()
     currL = ''
     for num in arr:
-    	currL += str(num)
+    	currL += str(num) + '-' if num != arr[-1] else str(num)
     stats5.update({currL: {'pts': stats5.get(currL).get('pts') + pts if stats5.get(currL) else pts, 
                            'ptsa': stats5.get(currL).get('ptsa') + ptsa if stats5.get(currL) else ptsa, 
                            'rebs': stats5.get(currL).get('rebs') + rebs if stats5.get(currL) else rebs, 
