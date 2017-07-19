@@ -27,9 +27,14 @@ def getStarters(root):
                     starters.append(int(player.attrib.get('uni')))
     return starters
 
-def getMyTeam():
+def getMyTeam(root):
     for team in root.iter('team'):
         if team.attrib.get('name') == teamName:
+            return team.attrib.get('id')
+
+def getOtherTeam(root):
+    for team in root.iter('team'):
+        if team.attrib.get('name') != teamName:
             return team.attrib.get('id')
 
 def getNumPoints(type):
@@ -55,19 +60,23 @@ def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
 
 def parseGame(root):
     arr = getStarters(root)
-    myTeam = getMyTeam()
+    myTeam = getMyTeam(root)
     pts = ptsa = rebs = asts = stls = blks = tos = 0
     dontSub = 0
     for period in root.iter('period'):
         lastSub = "10:00" #unhardcode this
         for play in period.iter('play'):
-            if play.attrib.get('action') == 'GOOD':
+            action = play.attrib.get('action')
+            timeNow = play.attrib.get('time')
+            assert len(arr) == 5 or action == 'SUB', "Mistake in file from game vs " + getOtherTeam(root) \
+                                                    + " in period number " + period.attrib.get('number') \
+                                                    + " at time " + timeNow
+            if action == 'GOOD':
                 if play.attrib.get('team') == myTeam:
                     pts += getNumPoints(play.attrib.get('type'))
                 else:
                     ptsa += getNumPoints(play.attrib.get('type'))
             elif play.attrib.get('team') == myTeam:
-                action = play.attrib.get('action')
                 if action == 'REBOUND':
                     if play.attrib.get('type') != 'DEADB':
                         rebs += 1
@@ -81,7 +90,6 @@ def parseGame(root):
                     tos += 1
                 elif action == 'SUB':
                     if dontSub == 0:
-                        timeNow = play.attrib.get('time')
                         mins = datetime.strptime(lastSub, '%M:%S') - datetime.strptime(timeNow, '%M:%S')
                         lastSub = timeNow
                         updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
@@ -103,4 +111,3 @@ if __name__ == '__main__':
             tree = ET.parse(file)
             root = tree.getroot()
             parseGame(root)
-    print(stats5, stats4, stats3, stats2, stats1)
