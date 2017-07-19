@@ -8,6 +8,7 @@
 
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from datetime import datetime
 import sys
 
 teamName = sys.argv[1]
@@ -53,13 +54,16 @@ def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
                            'tos': stats5.get(currL).get('tos') + tos if stats5.get(currL) else tos,
                            'mins': stats5.get(currL).get('mins') + mins if stats5.get(currL) else mins}})
 
+def findCombos(stats5, lineupSize):
+    return {}
+
 def parseGame(root):
     arr = getStarters(root)
     myTeam = getMyTeam()
     pts = ptsa = rebs = asts = stls = blks = tos = 0
-    mins = 0.
     dontSub = 0
     for period in root.iter('period'):
+        lastSub = "10:00" #unhardcode this
         for play in period.iter('play'):
             if play.attrib.get('action') == 'GOOD':
                 if play.attrib.get('team') == myTeam:
@@ -81,15 +85,18 @@ def parseGame(root):
                     tos += 1
                 elif action == 'SUB':
                     if dontSub == 0:
+                        timeNow = play.attrib.get('time')
+                        mins = datetime.strptime(lastSub, '%M:%S') - datetime.strptime(timeNow, '%M:%S')
+                        lastSub = timeNow
                         updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
                         pts = ptsa = rebs = asts = stls = blks = tos = 0
-                        mins = 0.
                     if play.attrib.get('type') == 'IN':
                         dontSub += 1
                         arr.append(int(play.attrib.get('uni')))
                     elif play.attrib.get('type') == 'OUT':
                         dontSub -= 1
                         arr.remove(int(play.attrib.get('uni')))
+        mins = datetime.strptime(lastSub, '%M:%S') - datetime.strptime("00:00", '%M:%S')
         updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
         pts = ptsa = rebs = asts = stls = blks = tos = 0
         mins = 0.
@@ -101,5 +108,8 @@ if __name__ == '__main__':
             tree = ET.parse(file)
             root = tree.getroot()
             parseGame(root)
-            print(stats5)
-            
+    stats4 = findCombos(stats5, 4)
+    stats3 = findCombos(stats5, 3)
+    stats2 = findCombos(stats5, 2)
+    stats1 = findCombos(stats5, 1)
+    print(stats5, stats4, stats3, stats2, stats1)
