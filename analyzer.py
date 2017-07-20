@@ -13,11 +13,11 @@ import xlsxwriter
 import sys
 
 teamName = sys.argv[1]
-stats1 = {3:2}
-stats2 = {3:3}
-stats3 = {3:3}
-stats4 = {3:3}
-stats5 = {3:3}
+stats1 = {}
+stats2 = {}
+stats3 = {}
+stats4 = {}
+stats5 = {}
 
 def getStarters(root):
     starters = []
