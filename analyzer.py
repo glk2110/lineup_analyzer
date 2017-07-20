@@ -13,11 +13,11 @@ import xlsxwriter
 import sys
 
 teamName = sys.argv[1]
-stats1 = {}
-stats2 = {}
-stats3 = {}
-stats4 = {}
-stats5 = {}
+stats1 = {3:2}
+stats2 = {3:3}
+stats3 = {3:3}
+stats4 = {3:3}
+stats5 = {3:3}
 
 def getStarters(root):
     starters = []
@@ -106,7 +106,7 @@ def parseGame(root):
         pts = ptsa = rebs = asts = stls = blks = tos = 0
         arr = getStarters(root)
 
-def writeToExcel():
+def writeToExcel(stats5, stats4, stats3, stats2, stats1):
     workbook = xlsxwriter.Workbook('lineup_analyzer.xlsx')
     sheetFivePlayers = workbook.add_worksheet('5-player combinations')
     sheetFourPlayers = workbook.add_worksheet('4-player combinations')
@@ -115,7 +115,7 @@ def writeToExcel():
     sheetOnePlayer = workbook.add_worksheet('individual players')
     count = 0
     for sheet in workbook.worksheets():
-        sheet.add_table('A1:'+chr(ord('V')-count)+str(len(stats5)))
+        sheet.add_table('A1:'+chr(ord('V')-count)+str(len(vars()['stats'+str(5-count)])+1))
         count += 1
     workbook.close()
 
@@ -125,5 +125,4 @@ if __name__ == '__main__':
             tree = ET.parse(file)
             root = tree.getroot()
             parseGame(root)
-    writeToExcel()
-
+    writeToExcel(stats5, stats4, stats3, stats2, stats1)
