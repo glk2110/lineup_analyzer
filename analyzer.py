@@ -115,6 +115,7 @@ def writeToExcel(stats5, stats4, stats3, stats2, stats1):
         vars()[p.number_to_words(i) + 'PlayerSheet'] = workbook.add_worksheet(str(i) + '-player combinations')
         vars()[p.number_to_words(i) + 'PlayerSheet'].add_table('A1:'+chr(ord('V')+i-5)+str(len(vars()['stats'+str(i)])+1))
     workbook.close()
+    #http://xlsxwriter.readthedocs.io/working_with_tables.html
 
 if __name__ == '__main__':
     for file in Path.cwd().iterdir():
