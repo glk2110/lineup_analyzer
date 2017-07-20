@@ -10,7 +10,10 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from datetime import datetime
 import xlsxwriter
+import inflect
 import sys
+
+p = inflect.engine()
 
 teamName = sys.argv[1]
 stats1 = {}
@@ -65,7 +68,7 @@ def parseGame(root):
     pts = ptsa = rebs = asts = stls = blks = tos = 0
     dontSub = 0
     for period in root.iter('period'):
-        lastSub = "10:00" #unhardcode this
+        lastSub = period.attrib.get('time')
         for play in period.iter('play'):
             action = play.attrib.get('action')
             timeNow = play.attrib.get('time')
@@ -108,15 +111,9 @@ def parseGame(root):
 
 def writeToExcel(stats5, stats4, stats3, stats2, stats1):
     workbook = xlsxwriter.Workbook('lineup_analyzer.xlsx')
-    sheetFivePlayers = workbook.add_worksheet('5-player combinations')
-    sheetFourPlayers = workbook.add_worksheet('4-player combinations')
-    sheetThreePlayers = workbook.add_worksheet('3-player combinations')
-    sheetTwoPlayers = workbook.add_worksheet('2-player combinations')
-    sheetOnePlayer = workbook.add_worksheet('individual players')
-    count = 0
-    for sheet in workbook.worksheets():
-        sheet.add_table('A1:'+chr(ord('V')-count)+str(len(vars()['stats'+str(5-count)])+1))
-        count += 1
+    for i in range(5, 0, -1):
+        vars()[p.number_to_words(i) + 'PlayerSheet'] = workbook.add_worksheet(str(i) + '-player combinations')
+        vars()[p.number_to_words(i) + 'PlayerSheet'].add_table('A1:'+chr(ord('V')+i-5)+str(len(vars()['stats'+str(i)])+1))
     workbook.close()
 
 if __name__ == '__main__':
