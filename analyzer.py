@@ -9,6 +9,7 @@
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from datetime import datetime
+import xlsxwriter
 import sys
 
 teamName = sys.argv[1]
@@ -105,9 +106,24 @@ def parseGame(root):
         pts = ptsa = rebs = asts = stls = blks = tos = 0
         arr = getStarters(root)
 
+def writeToExcel():
+    workbook = xlsxwriter.Workbook('lineup_analyzer.xlsx')
+    sheetFivePlayers = workbook.add_worksheet('5-player combinations')
+    sheetFourPlayers = workbook.add_worksheet('4-player combinations')
+    sheetThreePlayers = workbook.add_worksheet('3-player combinations')
+    sheetTwoPlayers = workbook.add_worksheet('2-player combinations')
+    sheetOnePlayer = workbook.add_worksheet('individual players')
+    count = 0
+    for sheet in workbook.worksheets():
+        sheet.add_table('A1:'+chr(ord('V')-count)+str(len(stats5)))
+        count += 1
+    workbook.close()
+
 if __name__ == '__main__':
     for file in Path.cwd().iterdir():
         if file.suffix == '.XML':
             tree = ET.parse(file)
             root = tree.getroot()
             parseGame(root)
+    writeToExcel()
+
