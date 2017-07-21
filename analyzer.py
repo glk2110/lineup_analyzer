@@ -50,6 +50,9 @@ def getNumPoints(type):
     else:
         return 2
 
+def getName(player):
+    return player
+
 def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
     arr.sort()
     for num in range(5,0,-1):
@@ -138,6 +141,14 @@ def writeToExcel(stats5, stats4, stats3, stats2, stats1):
         tableRange = 'A1:' + chr(ord('V') + i - 5) + str(len(vars()['stats' + str(i)]) + 1)
         vars()[p.number_to_words(i) + 'PlayerSheet'] = workbook.add_worksheet(str(i) + '-player combinations')
         vars()[p.number_to_words(i) + 'PlayerSheet'].add_table(tableRange, options)
+        row = 1
+        for lineup in globals()['stats'+str(i)]:
+            vars()[p.number_to_words(i) + 'PlayerSheet'].write(row, 0, lineup)
+            col = 1
+            for player in lineup.split('-'):
+                vars()[p.number_to_words(i) + 'PlayerSheet'].write(row, col, getName(player))
+                col += 1
+            row +=1
         columnsList.pop(i)
     workbook.close()
     #http://xlsxwriter.readthedocs.io/working_with_tables.html
