@@ -11,6 +11,7 @@ from pathlib import Path
 from datetime import datetime
 import xlsxwriter
 import inflect
+import itertools
 import sys
 
 p = inflect.engine()
@@ -51,16 +52,19 @@ def getNumPoints(type):
 
 def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
     arr.sort()
-    currL = '-'.join(str(num) for num in arr)
-    stats5.update({currL: {'pts': stats5.get(currL).get('pts') + pts if stats5.get(currL) else pts, 
-                           'ptsa': stats5.get(currL).get('ptsa') + ptsa if stats5.get(currL) else ptsa, 
-                           'rebs': stats5.get(currL).get('rebs') + rebs if stats5.get(currL) else rebs, 
-                           'asts': stats5.get(currL).get('asts') + asts if stats5.get(currL) else asts, 
-                           'stls': stats5.get(currL).get('stls') + stls if stats5.get(currL) else stls, 
-                           'blks': stats5.get(currL).get('blks') + blks if stats5.get(currL) else blks, 
-                           'tos': stats5.get(currL).get('tos') + tos if stats5.get(currL) else tos,
-                           'mins': stats5.get(currL).get('mins') + mins if stats5.get(currL) else mins}})
-    #use itertools.combinations to get combos of 4,3,2 and 1 player and loop thru them and update each
+    num = 5
+    for combo in itertools.combinations(arr, num):
+        currL = '-'.join(str(num) for num in combo)
+        currL = '-'.join(str(num) for num in arr)
+        stats5.update({currL: {'pts': stats5.get(currL).get('pts') + pts if stats5.get(currL) else pts, 
+                               'ptsa': stats5.get(currL).get('ptsa') + ptsa if stats5.get(currL) else ptsa, 
+                               'rebs': stats5.get(currL).get('rebs') + rebs if stats5.get(currL) else rebs, 
+                               'asts': stats5.get(currL).get('asts') + asts if stats5.get(currL) else asts, 
+                               'stls': stats5.get(currL).get('stls') + stls if stats5.get(currL) else stls, 
+                               'blks': stats5.get(currL).get('blks') + blks if stats5.get(currL) else blks, 
+                               'tos': stats5.get(currL).get('tos') + tos if stats5.get(currL) else tos,
+                               'mins': stats5.get(currL).get('mins') + mins if stats5.get(currL) else mins}})
+        print(currL)
 
 def parseGame(root):
     arr = getStarters(root)
