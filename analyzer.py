@@ -133,4 +133,3 @@ if __name__ == '__main__':
             root = tree.getroot()
             parseGame(root)
     writeToExcel(stats5, stats4, stats3, stats2, stats1)
-    print(stats1)
