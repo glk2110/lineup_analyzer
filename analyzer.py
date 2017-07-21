@@ -76,17 +76,19 @@ def parseGame(root):
         for play in period.iter('play'):
             action = play.attrib.get('action')
             timeNow = play.attrib.get('time')
+            typePlay = play.attrib.get('type')
+            team = play.attrib.get('team')
             assert len(arr) == 5 or action == 'SUB', "Mistake in file from game vs " + getOtherTeam(root) \
                                                     + " in period number " + period.attrib.get('number') \
                                                     + " at time " + timeNow
             if action == 'GOOD':
-                if play.attrib.get('team') == myTeam:
-                    pts += getNumPoints(play.attrib.get('type'))
+                if team == myTeam:
+                    pts += getNumPoints(typePlay)
                 else:
-                    ptsa += getNumPoints(play.attrib.get('type'))
-            elif play.attrib.get('team') == myTeam:
+                    ptsa += getNumPoints(typePlay)
+            elif team == myTeam:
                 if action == 'REBOUND':
-                    if play.attrib.get('type') != 'DEADB':
+                    if typePlay != 'DEADB':
                         rebs += 1
                 elif action == 'ASSIST':
                     asts += 1
@@ -97,17 +99,18 @@ def parseGame(root):
                 elif action == 'TURNOVER':
                     tos += 1
                 elif action == 'SUB':
+                    uni = int(play.attrib.get('uni'))
                     if dontSub == 0:
                         mins = datetime.strptime(lastSub, '%M:%S') - datetime.strptime(timeNow, '%M:%S')
                         lastSub = timeNow
                         updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
                         pts = ptsa = rebs = asts = stls = blks = tos = 0
-                    if play.attrib.get('type') == 'IN':
+                    if typePlay == 'IN':
                         dontSub += 1
-                        arr.append(int(play.attrib.get('uni')))
-                    elif play.attrib.get('type') == 'OUT':
+                        arr.append(uni)
+                    elif typePlay == 'OUT':
                         dontSub -= 1
-                        arr.remove(int(play.attrib.get('uni')))
+                        arr.remove(uni)
         mins = datetime.strptime(lastSub, '%M:%S') - datetime.strptime("00:00", '%M:%S')
         updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
         pts = ptsa = rebs = asts = stls = blks = tos = 0
@@ -120,6 +123,8 @@ def writeToExcel(stats5, stats4, stats3, stats2, stats1):
         vars()[p.number_to_words(i) + 'PlayerSheet'].add_table('A1:'+chr(ord('V')+i-5)+str(len(vars()['stats'+str(i)])+1))
     workbook.close()
     #http://xlsxwriter.readthedocs.io/working_with_tables.html
+    #https://stackoverflow.com/questions/32463667/write-list-of-nested-dictionaries-to-excel-file-in-python
+    #see bottom answer in above post
 
 if __name__ == '__main__':
     for file in Path.cwd().iterdir():
