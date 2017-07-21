@@ -53,9 +53,9 @@ def getNumPoints(type):
 def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
     arr.sort()
     for num in range(5,0,-1):
+        currStats = globals()['stats'+str(num)]
         for combo in itertools.combinations(arr, num):
             currL = '-'.join(str(num) for num in combo)
-            currStats = globals()['stats'+str(num)]
             currStats.update({
                 currL: {'pts': currStats.get(currL).get('pts') + pts if currStats.get(currL) else pts, 
                         'ptsa': currStats.get(currL).get('ptsa') + ptsa if currStats.get(currL) else ptsa, 
@@ -128,4 +128,4 @@ if __name__ == '__main__':
             root = tree.getroot()
             parseGame(root)
     writeToExcel(stats5, stats4, stats3, stats2, stats1)
-    print(stats5,stats4,stats3,stats2,stats1)
+    print(stats1)
