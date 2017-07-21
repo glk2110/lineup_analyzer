@@ -52,19 +52,19 @@ def getNumPoints(type):
 
 def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
     arr.sort()
-    num = 5
-    for combo in itertools.combinations(arr, num):
-        currL = '-'.join(str(num) for num in combo)
-        currL = '-'.join(str(num) for num in arr)
-        stats5.update({currL: {'pts': stats5.get(currL).get('pts') + pts if stats5.get(currL) else pts, 
-                               'ptsa': stats5.get(currL).get('ptsa') + ptsa if stats5.get(currL) else ptsa, 
-                               'rebs': stats5.get(currL).get('rebs') + rebs if stats5.get(currL) else rebs, 
-                               'asts': stats5.get(currL).get('asts') + asts if stats5.get(currL) else asts, 
-                               'stls': stats5.get(currL).get('stls') + stls if stats5.get(currL) else stls, 
-                               'blks': stats5.get(currL).get('blks') + blks if stats5.get(currL) else blks, 
-                               'tos': stats5.get(currL).get('tos') + tos if stats5.get(currL) else tos,
-                               'mins': stats5.get(currL).get('mins') + mins if stats5.get(currL) else mins}})
-        print(currL)
+    for num in range(5,0,-1):
+        for combo in itertools.combinations(arr, num):
+            currL = '-'.join(str(num) for num in combo)
+            currStats = globals()['stats'+str(num)]
+            currStats.update({
+                currL: {'pts': currStats.get(currL).get('pts') + pts if currStats.get(currL) else pts, 
+                        'ptsa': currStats.get(currL).get('ptsa') + ptsa if currStats.get(currL) else ptsa, 
+                        'rebs': currStats.get(currL).get('rebs') + rebs if currStats.get(currL) else rebs, 
+                        'asts': currStats.get(currL).get('asts') + asts if currStats.get(currL) else asts, 
+                        'stls': currStats.get(currL).get('stls') + stls if currStats.get(currL) else stls, 
+                        'blks': currStats.get(currL).get('blks') + blks if currStats.get(currL) else blks, 
+                        'tos': currStats.get(currL).get('tos') + tos if currStats.get(currL) else tos,
+                        'mins': currStats.get(currL).get('mins') + mins if currStats.get(currL) else mins}})
 
 def parseGame(root):
     arr = getStarters(root)
@@ -128,3 +128,4 @@ if __name__ == '__main__':
             root = tree.getroot()
             parseGame(root)
     writeToExcel(stats5, stats4, stats3, stats2, stats1)
+    print(stats5,stats4,stats3,stats2,stats1)
