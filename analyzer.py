@@ -53,6 +53,9 @@ def getNumPoints(type):
 def getName(player):
     return player
 
+def getTeamEfficiency():
+    return "0"
+
 def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
     arr.sort()
     for num in range(5,0,-1):
@@ -124,7 +127,8 @@ def writeToExcel(stats5, stats4, stats3, stats2, stats1):
     columnsList = [{'header': 'Line-up Code'}, {'header': 'Player 1'}, 
                    {'header': 'Player 2'}, {'header': 'Player 3'}, 
                    {'header': 'Player 4'}, {'header': 'Player 5'}, 
-                   {'header': 'Efficiency (+/- per min)', 'formula': '([Points]-[Points allowed])/[Minutes]'}, 
+                   {'header': 'Efficiency (+/- per min)', 
+                   'formula': '(([Points]-[Points allowed])/[Minutes])-' + getTeamEfficiency()}, 
                    {'header': 'Points'}, {'header': 'Points allowed'},
                    {'header': 'Rebounds'}, {'header': 'Assists'}, 
                    {'header': 'Steals'}, {'header': 'Blocks'}, 
