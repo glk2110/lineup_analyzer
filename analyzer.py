@@ -61,13 +61,26 @@ def addPlayerInfo(root):
                     name = (names[1] + ' ' + names[0]).replace(',','')
                     playerNames.update({str(int(player.attrib.get('uni'))): name})
 
-def getTeamStats():
+def setTeamStats():
     for file in Path.cwd().iterdir():
         if file.suffix == '.XML':
             tree = ET.parse(file)
             root = tree.getroot()
-    teamStats.update({'scored': '10'})
-    teamStats.update({'allowed': '10'})
+            for team in root.iter('team'):
+                if team.attrib.get('name') == teamName:
+                    for linescore in team.iter('linescore'):
+                        gameScore = linescore.attrib.get('score')
+                        teamStats.update({
+                            'scored': str(int(teamStats.get('scored')) + 
+                            int(gameScore)) if teamStats.get('scored') else gameScore
+                        })
+                elif team.attrib.get('name') != teamName:
+                    for linescore in team.iter('linescore'):
+                        theirScore = linescore.attrib.get('score')
+                        teamStats.update({
+                            'allowed': str(int(teamStats.get('allowed')) + 
+                            int(theirScore)) if teamStats.get('allowed') else theirScore
+                        })
     teamStats.update({'minutes': '10'})
 
 def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
@@ -84,7 +97,8 @@ def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
                         'stls': currStats.get(currL).get('stls') + stls if currStats.get(currL) else stls, 
                         'blks': currStats.get(currL).get('blks') + blks if currStats.get(currL) else blks, 
                         'tos': currStats.get(currL).get('tos') + tos if currStats.get(currL) else tos,
-                        'mins': currStats.get(currL).get('mins') + mins if currStats.get(currL) else mins}})
+                        'mins': currStats.get(currL).get('mins') + mins if currStats.get(currL) else mins}
+                        })
 
 def parseGame(root):
     arr = getStarters(root)
@@ -138,9 +152,9 @@ def parseGame(root):
 
 def writeToExcel(stats5, stats4, stats3, stats2, stats1, playerNames, teamStats):
     workbook = xlsxwriter.Workbook('lineup_analyzer.xlsx')
-    columnsList = [{'header': 'Player 1'}, {'header': 'Player 2'}, 
-                   {'header': 'Player 3'}, {'header': 'Player 4'}, 
-                   {'header': 'Player 5'}, 
+    columnsList = [{'header': 'Line-up Code'}, {'header': 'Player 1'}, 
+                   {'header': 'Player 2'}, {'header': 'Player 3'}, 
+                   {'header': 'Player 4'}, {'header': 'Player 5'}, 
                    {'header': 'Efficiency (+/- per min)', 
                    'formula': '(([Points]-[Points allowed])/[Minutes])-(((' + 
                                 teamStats.get('scored') + '-[Points])-(' + 
@@ -159,12 +173,13 @@ def writeToExcel(stats5, stats4, stats3, stats2, stats1, playerNames, teamStats)
                    {'header': 'TOs per min', 'formula': '[Turnovers]/[Minutes]'}]
     for i in range(5, 0, -1):
         options = {'name': 'Table' + str(i), 'columns': columnsList}
-        tableRange = 'A1:' + chr(ord('U') + i - 5) + str(len(vars()['stats' + str(i)]) + 1)
+        tableRange = 'A1:' + chr(ord('V') + i - 5) + str(len(vars()['stats' + str(i)]) + 1)
         vars()[p.number_to_words(i) + 'PlayerSheet'] = workbook.add_worksheet(str(i) + '-player combinations')
         vars()[p.number_to_words(i) + 'PlayerSheet'].add_table(tableRange, options)
         row = 1
         for lineup in globals()['stats'+str(i)]:
-            col = 0
+            vars()[p.number_to_words(i) + 'PlayerSheet'].write(row, 0, lineup)
+            col = 1
             for player in lineup.split('-'):
                 vars()[p.number_to_words(i) + 'PlayerSheet'].write(row, col, playerNames.get(player))
                 col += 1
@@ -182,5 +197,5 @@ if __name__ == '__main__':
             root = tree.getroot()
             parseGame(root)
             addPlayerInfo(root)
-    getTeamStats()
+    setTeamStats()
     writeToExcel(stats5, stats4, stats3, stats2, stats1, playerNames, teamStats)
