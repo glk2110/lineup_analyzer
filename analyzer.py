@@ -124,7 +124,7 @@ def parseGame(root):
 
 def writeToExcel(stats5, stats4, stats3, stats2, stats1):
     workbook = xlsxwriter.Workbook('lineup_analyzer.xlsx')
-    columnsList = [{'header': 'Line-up Code'}, {'header': 'Player 1'}, 
+    columnsList = [{'header': 'Player 1'}, 
                    {'header': 'Player 2'}, {'header': 'Player 3'}, 
                    {'header': 'Player 4'}, {'header': 'Player 5'}, 
                    {'header': 'Efficiency (+/- per min)', 
@@ -142,18 +142,17 @@ def writeToExcel(stats5, stats4, stats3, stats2, stats1):
                    {'header': 'TOs per min', 'formula': '[Turnovers]/[Minutes]'}]
     for i in range(5, 0, -1):
         options = {'name': 'Table' + str(i), 'columns': columnsList}
-        tableRange = 'A1:' + chr(ord('V') + i - 5) + str(len(vars()['stats' + str(i)]) + 1)
+        tableRange = 'A1:' + chr(ord('U') + i - 5) + str(len(vars()['stats' + str(i)]) + 1)
         vars()[p.number_to_words(i) + 'PlayerSheet'] = workbook.add_worksheet(str(i) + '-player combinations')
         vars()[p.number_to_words(i) + 'PlayerSheet'].add_table(tableRange, options)
         row = 1
         for lineup in globals()['stats'+str(i)]:
-            vars()[p.number_to_words(i) + 'PlayerSheet'].write(row, 0, lineup)
-            col = 1
+            col = 0
             for player in lineup.split('-'):
                 vars()[p.number_to_words(i) + 'PlayerSheet'].write(row, col, getName(player))
                 col += 1
             row +=1
-        columnsList.pop(i)
+        columnsList.pop(i-1)
     workbook.close()
     #http://xlsxwriter.readthedocs.io/working_with_tables.html
     #https://stackoverflow.com/questions/32463667/write-list-of-nested-dictionaries-to-excel-file-in-python
