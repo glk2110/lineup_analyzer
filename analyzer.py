@@ -81,7 +81,18 @@ def setTeamStats():
                             'allowed': str(int(teamStats.get('allowed')) + 
                             int(theirScore)) if teamStats.get('allowed') else theirScore
                         })
-    teamStats.update({'minutes': '10'})
+            for rules in root.iter('rules'):
+                periodsInGame = rules.get('prds')
+                minsInPeriod = rules.get('minutes')
+                minsOT = rules.get('minutesot')
+            for status in root.iter('status'):
+                period = status.attrib.get('period')
+                mins = (int(minsInPeriod) * int(periodsInGame)) + \
+                       ((int(period) - int(periodsInGame)) * int(minsOT))
+                teamStats.update({
+                    'minutes': str(int(teamStats.get('minutes')) + 
+                               int(mins)) if teamStats.get('minutes') else mins
+                })
 
 def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
     arr.sort()
