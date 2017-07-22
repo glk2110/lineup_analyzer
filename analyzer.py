@@ -124,9 +124,9 @@ def parseGame(root):
 
 def writeToExcel(stats5, stats4, stats3, stats2, stats1):
     workbook = xlsxwriter.Workbook('lineup_analyzer.xlsx')
-    columnsList = [{'header': 'Player 1'}, 
-                   {'header': 'Player 2'}, {'header': 'Player 3'}, 
-                   {'header': 'Player 4'}, {'header': 'Player 5'}, 
+    columnsList = [{'header': 'Player 1'}, {'header': 'Player 2'}, 
+                   {'header': 'Player 3'}, {'header': 'Player 4'}, 
+                   {'header': 'Player 5'}, 
                    {'header': 'Efficiency (+/- per min)', 
                    'formula': '(([Points]-[Points allowed])/[Minutes])-' + getTeamEfficiency()}, 
                    {'header': 'Points'}, {'header': 'Points allowed'},
