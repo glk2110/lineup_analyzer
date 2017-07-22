@@ -22,6 +22,7 @@ stats2 = {}
 stats3 = {}
 stats4 = {}
 stats5 = {}
+playerNames = {}
 
 def getStarters(root):
     starters = []
@@ -50,10 +51,16 @@ def getNumPoints(type):
     else:
         return 2
 
-def getName(player):
-    return player
+def addPlayerInfo(root):
+    for team in root.iter('team'):
+        if team.attrib.get('name') == teamName:
+            for player in team.iter('player'):
+                names = player.attrib.get('name').split(' ')
+                if len(names)>1:
+                    name = (names[1] + ' ' + names[0]).replace(',','')
+                    playerNames.update({str(int(player.attrib.get('uni'))): name})
 
-def getTeamEfficiency():
+def getTeamStat(stat):
     return "0"
 
 def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
@@ -122,13 +129,16 @@ def parseGame(root):
         pts = ptsa = rebs = asts = stls = blks = tos = 0
         arr = getStarters(root)
 
-def writeToExcel(stats5, stats4, stats3, stats2, stats1):
+def writeToExcel(stats5, stats4, stats3, stats2, stats1, playerNames):
     workbook = xlsxwriter.Workbook('lineup_analyzer.xlsx')
     columnsList = [{'header': 'Player 1'}, {'header': 'Player 2'}, 
                    {'header': 'Player 3'}, {'header': 'Player 4'}, 
                    {'header': 'Player 5'}, 
                    {'header': 'Efficiency (+/- per min)', 
-                   'formula': '(([Points]-[Points allowed])/[Minutes])-' + getTeamEfficiency()}, 
+                   'formula': '(([Points]-[Points allowed])/[Minutes])-((' + 
+                                getTeamStat("scored") + '-[Points])-(' + 
+                                getTeamStat("allowed") + '-[Points allowed]))/' +
+                                getTeamStat('minutes')}, 
                    {'header': 'Points'}, {'header': 'Points allowed'},
                    {'header': 'Rebounds'}, {'header': 'Assists'}, 
                    {'header': 'Steals'}, {'header': 'Blocks'}, 
@@ -149,7 +159,7 @@ def writeToExcel(stats5, stats4, stats3, stats2, stats1):
         for lineup in globals()['stats'+str(i)]:
             col = 0
             for player in lineup.split('-'):
-                vars()[p.number_to_words(i) + 'PlayerSheet'].write(row, col, getName(player))
+                vars()[p.number_to_words(i) + 'PlayerSheet'].write(row, col, playerNames.get(player))
                 col += 1
             row +=1
         columnsList.pop(i-1)
@@ -164,4 +174,5 @@ if __name__ == '__main__':
             tree = ET.parse(file)
             root = tree.getroot()
             parseGame(root)
-    writeToExcel(stats5, stats4, stats3, stats2, stats1)
+            addPlayerInfo(root)
+    writeToExcel(stats5, stats4, stats3, stats2, stats1, playerNames)
