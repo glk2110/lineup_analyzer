@@ -23,6 +23,7 @@ stats3 = {}
 stats4 = {}
 stats5 = {}
 playerNames = {}
+teamStats = {}
 
 def getStarters(root):
     starters = []
@@ -60,8 +61,14 @@ def addPlayerInfo(root):
                     name = (names[1] + ' ' + names[0]).replace(',','')
                     playerNames.update({str(int(player.attrib.get('uni'))): name})
 
-def getTeamStat(stat):
-    return "0"
+def getTeamStats():
+    for file in Path.cwd().iterdir():
+        if file.suffix == '.XML':
+            tree = ET.parse(file)
+            root = tree.getroot()
+    teamStats.update({'scored': '10'})
+    teamStats.update({'allowed': '10'})
+    teamStats.update({'minutes': '10'})
 
 def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
     arr.sort()
@@ -129,16 +136,16 @@ def parseGame(root):
         pts = ptsa = rebs = asts = stls = blks = tos = 0
         arr = getStarters(root)
 
-def writeToExcel(stats5, stats4, stats3, stats2, stats1, playerNames):
+def writeToExcel(stats5, stats4, stats3, stats2, stats1, playerNames, teamStats):
     workbook = xlsxwriter.Workbook('lineup_analyzer.xlsx')
     columnsList = [{'header': 'Player 1'}, {'header': 'Player 2'}, 
                    {'header': 'Player 3'}, {'header': 'Player 4'}, 
                    {'header': 'Player 5'}, 
                    {'header': 'Efficiency (+/- per min)', 
                    'formula': '(([Points]-[Points allowed])/[Minutes])-(((' + 
-                                getTeamStat('scored') + '-[Points])-(' + 
-                                getTeamStat('allowed') + '-[Points allowed]))/(' +
-                                getTeamStat('minutes') + '-[Minutes]))'}, 
+                                teamStats.get('scored') + '-[Points])-(' + 
+                                teamStats.get('allowed') + '-[Points allowed]))/(' +
+                                teamStats.get('minutes') + '-[Minutes]))'}, 
                    {'header': 'Points'}, {'header': 'Points allowed'},
                    {'header': 'Rebounds'}, {'header': 'Assists'}, 
                    {'header': 'Steals'}, {'header': 'Blocks'}, 
@@ -175,4 +182,5 @@ if __name__ == '__main__':
             root = tree.getroot()
             parseGame(root)
             addPlayerInfo(root)
-    writeToExcel(stats5, stats4, stats3, stats2, stats1, playerNames)
+    getTeamStats()
+    writeToExcel(stats5, stats4, stats3, stats2, stats1, playerNames, teamStats)
