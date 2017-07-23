@@ -58,7 +58,7 @@ def addPlayerInfo(root):
             for player in team.iter('player'):
                 names = player.attrib.get('name').split(' ')
                 if len(names)>1:
-                    name = (names[1] + ' ' + names[0]).replace(',','')
+                    name = (names[1]).replace(',','') # + ' ' + names[0]).replace(',','')
                     playerNames.update({str(int(player.attrib.get('uni'))): name})
 
 def setTeamStats():
@@ -87,8 +87,8 @@ def setTeamStats():
                 minsOT = rules.get('minutesot')
             for status in root.iter('status'):
                 period = status.attrib.get('period')
-                mins = (int(minsInPeriod) * int(periodsInGame)) + \
-                       ((int(period) - int(periodsInGame)) * int(minsOT))
+                mins = str((int(minsInPeriod) * int(periodsInGame)) + \
+                       ((int(period) - int(periodsInGame)) * int(minsOT)))
                 teamStats.update({
                     'minutes': str(int(teamStats.get('minutes')) + 
                                int(mins)) if teamStats.get('minutes') else mins
@@ -163,41 +163,78 @@ def parseGame(root):
 
 def writeToExcel(stats5, stats4, stats3, stats2, stats1, playerNames, teamStats):
     workbook = xlsxwriter.Workbook('lineup_analyzer.xlsx')
-    columnsList = [{'header': 'Line-up Code'}, {'header': 'Player 1'}, 
+    boldC1 = workbook.add_format({'bold': True, 'center_across': True, 'left':5})
+    boldC2 = workbook.add_format({'bold': True, 'center_across': True, 'right':5})
+    b1 = workbook.add_format({'bottom':5})
+    b2 = workbook.add_format({'bottom':5, 'right': 5})
+    rightC = workbook.add_format({'center_across': True, 'right': 5})
+    boldC = workbook.add_format({'bold': True, 'center_across': True})
+    center = workbook.add_format({'center_across': True})
+    green = workbook.add_format({'bg_color': '#00FF00'})
+    red = workbook.add_format({'bg_color': '#FF0000'})
+    columnsList = [{'header': 'Line-up'}, {'header': 'Player 1'}, 
                    {'header': 'Player 2'}, {'header': 'Player 3'}, 
                    {'header': 'Player 4'}, {'header': 'Player 5'}, 
-                   {'header': 'Efficiency (+/- per min)', 
-                   'formula': '(([Points]-[Points allowed])/[Minutes])-(((' + 
+                   {'header': 'Efficiency', 
+                   'formula': 'ROUND((([Points]-[Points allowed])/[Minutes])-(((' + 
                                 teamStats.get('scored') + '-[Points])-(' + 
                                 teamStats.get('allowed') + '-[Points allowed]))/(' +
-                                teamStats.get('minutes') + '-[Minutes]))'}, 
+                                teamStats.get('minutes') + '-[Minutes])),2)',
+                    'format': center}, 
                    {'header': 'Points'}, {'header': 'Points allowed'},
                    {'header': 'Rebounds'}, {'header': 'Assists'}, 
                    {'header': 'Steals'}, {'header': 'Blocks'}, 
                    {'header': 'Turnovers'}, {'header': 'Minutes'}, 
-                   {'header': 'Points per min', 'formula': '[Points]/[Minutes]'},
-                   {'header': 'Points allowed per min', 'formula': '[Points allowed]/[Minutes]'}, 
-                   {'header': 'Rebounds per min', 'formula': '[Rebounds]/[Minutes]'}, 
-                   {'header': 'Assists per min', 'formula': '[Assists]/[Minutes]'}, 
-                   {'header': 'Steals per min', 'formula': '[Steals]/[Minutes]'}, 
-                   {'header': 'Blocks per min', 'formula': '[Blocks]/[Minutes]'}, 
-                   {'header': 'TOs per min', 'formula': '[Turnovers]/[Minutes]'}]
+                   {'header': 'Points per min', 'formula': 'ROUND([Points]/[Minutes],2)', 'format': center},
+                   {'header': 'Pts allowed per min',
+                    'formula':'ROUND([Points allowed]/[Minutes],2)','format':center}, 
+                   {'header': 'Rebounds per min', 
+                    'formula': 'ROUND([Rebounds]/[Minutes],2)', 'format': center}, 
+                   {'header': 'Assists per min', 
+                    'formula': 'ROUND([Assists]/[Minutes],2)', 'format': center}, 
+                   {'header': 'Steals per min', 'formula': 'ROUND([Steals]/[Minutes],2)', 'format': center}, 
+                   {'header': 'Blocks per min', 'formula': 'ROUND([Blocks]/[Minutes],2)', 'format': center}, 
+                   {'header': 'TOs per min', 'formula': 'ROUND([Turnovers]/[Minutes],2)', 'format': center}]
     for i in range(5, 0, -1):
         options = {'name': 'Table' + str(i), 'columns': columnsList}
         tableRange = 'A1:' + chr(ord('V') + i - 5) + str(len(vars()['stats' + str(i)]) + 1)
-        vars()[p.number_to_words(i) + 'PlayerSheet'] = workbook.add_worksheet(str(i) + '-player combinations')
-        vars()[p.number_to_words(i) + 'PlayerSheet'].add_table(tableRange, options)
+        worksheet = workbook.add_worksheet(str(i) + '-player combinations')
+        worksheet.add_table(tableRange, options)
         row = 1
         for lineup in globals()['stats'+str(i)]:
-            vars()[p.number_to_words(i) + 'PlayerSheet'].write(row, 0, lineup)
+            worksheet.write(row, 0, lineup, center)
             col = 1
             for player in lineup.split('-'):
-                vars()[p.number_to_words(i) + 'PlayerSheet'].write(row, col, playerNames.get(player))
+                if col == 1:
+                    worksheet.write(row, col, playerNames.get(player), boldC1)
+                elif col == i:
+                    worksheet.write(row, col, playerNames.get(player), boldC2)
+                else:
+                    worksheet.write(row, col, playerNames.get(player), boldC)
                 col += 1
-            row +=1
-        columnsList.pop(i-1)
+            column = col + 1
+            for value in globals()['stats'+str(i)].get(lineup):
+                if column == col + 8:
+                    thisMins = round(globals()['stats'+str(i)].get(lineup).get(value).total_seconds()/60, 2)
+                    worksheet.write(row, column, thisMins, rightC)
+                else:
+                    worksheet.write(row, column, globals()['stats'+str(i)].get(lineup).get(value), center)
+                column += 1
+            row += 1
+        hCol = 0
+        for thing in columnsList:
+            if hCol == 0 or hCol == col - 1 or hCol == col + 8:
+                worksheet.write(0, hCol, thing.get('header'), b2)
+            else:
+                worksheet.write(0, hCol, thing.get('header'), b1)
+            hCol += 1
+        worksheet.conditional_format(1, col, row-1, col, {'type': '3_color_scale',
+                                                          'min_color': '#FF0F0F', #red
+                                                          'mid_color': '#FFFFFF', #white
+                                                          'max_color': '#00FF00'  #green
+                                                          })
+        columnsList.pop(i)
     workbook.close()
-    #http://xlsxwriter.readthedocs.io/working_with_tables.html
     #https://stackoverflow.com/questions/32463667/write-list-of-nested-dictionaries-to-excel-file-in-python
     #see bottom answer in above post
 
