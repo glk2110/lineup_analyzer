@@ -52,6 +52,7 @@ def getNumPoints(type):
     else:
         return 2
 
+#This method finds the name of each player based on his/her number
 def addPlayerInfo(root):
     for team in root.iter('team'):
         if team.attrib.get('name') == teamName:
@@ -61,6 +62,7 @@ def addPlayerInfo(root):
                     name = (names[1]).replace(',','') # + ' ' + names[0]).replace(',','')
                     playerNames.update({str(int(player.attrib.get('uni'))): name})
 
+#This method sets the total team statistics that will be used in the efficiency calculation
 def setTeamStats():
     for file in Path.cwd().iterdir():
         if file.suffix == '.XML':
@@ -94,6 +96,7 @@ def setTeamStats():
                                int(mins)) if teamStats.get('minutes') else mins
                 })
 
+#This method updates the stats for all 31 combinations of players that are on the court
 def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
     arr.sort()
     for num in range(5,0,-1):
@@ -111,6 +114,7 @@ def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
                         'mins': currStats.get(currL).get('mins') + mins if currStats.get(currL) else mins}
                         })
 
+#This method goes through every play of the play-by-play and increments all of the stats as they happen
 def parseGame(root):
     arr = getStarters(root)
     myTeam = getMyTeam(root)
@@ -161,6 +165,7 @@ def parseGame(root):
         pts = ptsa = rebs = asts = stls = blks = tos = 0
         arr = getStarters(root)
 
+#This method uses xlsxwriter to write all of the data to the excel file and format the file
 def writeToExcel(stats5, stats4, stats3, stats2, stats1, playerNames, teamStats):
     workbook = xlsxwriter.Workbook('lineup_analyzer.xlsx')
     boldC1 = workbook.add_format({'bold': True, 'center_across': True, 'left':5})
@@ -235,8 +240,6 @@ def writeToExcel(stats5, stats4, stats3, stats2, stats1, playerNames, teamStats)
                                                           })
         columnsList.pop(i)
     workbook.close()
-    #https://stackoverflow.com/questions/32463667/write-list-of-nested-dictionaries-to-excel-file-in-python
-    #see bottom answer in above post
 
 if __name__ == '__main__':
     for file in Path.cwd().iterdir():
