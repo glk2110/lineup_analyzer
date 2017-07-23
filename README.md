@@ -1,5 +1,5 @@
 # Basketball Line-up Analyzer
-Find the most efficient combinations of players.
+*Find the most efficient combinations of players.*
 
 Efficiency is calculated for each line-up based on the difference between the team's +/- when the line-up is on the court vs. when the line-up is not on the court. Every combination's points, points allowed, rebounds, assists, steals, blocks, turnovers and minutes are displayed. Every combination's per minute stats are displayed as well. The program parses the play-by-play from XML files automatically produced after every NCAA Division I basketball game.
 ## How to Use
