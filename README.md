@@ -38,4 +38,4 @@ Note: If unsure about your proper team name, open the XML file and use the name 
 ### See the results! 
 Find the file that was produced in the same folder as the program. It will be named, `lineup_analyzer`.
 
-Scroll through the different tabs of the excel file to see the best 5-player combinations, 4-player combinations, 3-player combinations, 2-player combinations and individual players!
+Look through the different tabs of the excel file to see the best 5-player combinations, 4-player combinations, 3-player combinations, 2-player combinations and individual players!
