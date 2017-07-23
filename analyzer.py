@@ -10,11 +10,8 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from datetime import datetime
 import xlsxwriter
-import inflect
 import itertools
 import sys
-
-p = inflect.engine()
 
 teamName = sys.argv[1]
 stats1 = {}
