@@ -1,5 +1,5 @@
 # Basketball Line-up Analyzer
-#### Find the most efficient combinations of players.
+#### Find the most efficient combinations of players
 
 Efficiency is calculated for each line-up based on the difference between the team's +/- when the line-up is on the court vs. when the line-up is not on the court. 
 
