@@ -34,9 +34,9 @@ $ python3 gui.py
 
 Note: If unsure about your proper team name, open the XML file and use the name your team goes by in the file. 
 ### See the results! 
-Find the file that was produced in the same folder as the program. It will be named, `lineup_analyzer`.
+1. Find the file that was produced in the same folder as the program. It will be named, `lineup_analyzer`.
 
-Look through the different tabs of the excel file to see the best 5-player combinations, 4-player combinations, 3-player combinations, 2-player combinations and individual players!
+2. Look through the different tabs of the excel file to see the best 5-player combinations, 4-player combinations, 3-player combinations, 2-player combinations and individual players!
 
 Note: If you can not find the file that was produced, it is because there was an error in one of the XML files.
 See the output in terminal to find the error.
