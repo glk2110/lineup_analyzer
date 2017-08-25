@@ -178,25 +178,25 @@ def writeToExcel(stats5, stats4, stats3, stats2, stats1, playerNames, teamStats)
                    {'header': 'Player 2'}, {'header': 'Player 3'}, 
                    {'header': 'Player 4'}, {'header': 'Player 5'}, 
                    {'header': 'Efficiency', 
-                   'formula': 'ROUND((([Points]-[Points allowed])/[Minutes])-(((' + 
+                   'formula': 'ROUND((([Points]-[Pts allowed])/[Minutes])-(((' + 
                                 teamStats.get('scored') + '-[Points])-(' + 
-                                teamStats.get('allowed') + '-[Points allowed]))/(' +
+                                teamStats.get('allowed') + '-[Pts allowed]))/(' +
                                 teamStats.get('minutes') + '-[Minutes])),2)',
                     'format': center}, 
-                   {'header': 'Points'}, {'header': 'Points allowed'},
-                   {'header': 'Rebounds'}, {'header': 'Assists'}, 
+                   {'header': 'Points'}, {'header': 'Pts allowed'},
+                   {'header': 'Rebs'}, {'header': 'Assists'}, 
                    {'header': 'Steals'}, {'header': 'Blocks'}, 
-                   {'header': 'Turnovers'}, {'header': 'Minutes'}, 
-                   {'header': 'Points per min', 'formula': 'ROUND([Points]/[Minutes],2)', 'format': center},
-                   {'header': 'Pts allowed per min',
-                    'formula':'ROUND([Points allowed]/[Minutes],2)','format':center}, 
-                   {'header': 'Rebounds per min', 
-                    'formula': 'ROUND([Rebounds]/[Minutes],2)', 'format': center}, 
-                   {'header': 'Assists per min', 
+                   {'header': 'TOs'}, {'header': 'Minutes'}, 
+                   {'header': 'Points/min', 'formula': 'ROUND([Points]/[Minutes],2)', 'format': center},
+                   {'header': 'Pts allowed/min',
+                    'formula':'ROUND([Pts allowed]/[Minutes],2)','format':center}, 
+                   {'header': 'Rebs/min', 
+                    'formula': 'ROUND([Rebs]/[Minutes],2)', 'format': center}, 
+                   {'header': 'Assists/min', 
                     'formula': 'ROUND([Assists]/[Minutes],2)', 'format': center}, 
-                   {'header': 'Steals per min', 'formula': 'ROUND([Steals]/[Minutes],2)', 'format': center}, 
-                   {'header': 'Blocks per min', 'formula': 'ROUND([Blocks]/[Minutes],2)', 'format': center}, 
-                   {'header': 'TOs per min', 'formula': 'ROUND([Turnovers]/[Minutes],2)', 'format': center}]
+                   {'header': 'Steals/min', 'formula': 'ROUND([Steals]/[Minutes],2)', 'format': center}, 
+                   {'header': 'Blocks/min', 'formula': 'ROUND([Blocks]/[Minutes],2)', 'format': center}, 
+                   {'header': 'TOs/min', 'formula': 'ROUND([TOs]/[Minutes],2)', 'format': center}]
     for i in range(5, 0, -1):
         options = {'name': 'Table' + str(i), 'columns': columnsList}
         tableRange = 'A1:' + chr(ord('V') + i - 5) + str(len(vars()['stats' + str(i)]) + 1)
