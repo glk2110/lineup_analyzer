@@ -6,10 +6,12 @@ root.geometry("350x100")
 root.configure(background="wheat2")
 def runButton():
 	os.system('python3 analyzer.py '+ entry.get())
+	os.system('python3 adv_analyzer.py '+ entry.get())
 	root.destroy()
 
 def runEnter(self):
 	os.system('python3 analyzer.py '+ entry.get())
+	os.system('python3 adv_analyzer.py '+ entry.get())
 	root.destroy()
 
 frame = Frame(root)
