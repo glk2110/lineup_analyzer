@@ -73,6 +73,12 @@ def setTeamStats():
                             'scored': str(int(teamStats.get('scored')) + 
                             int(gameScore)) if teamStats.get('scored') else gameScore
                         })
+                    for totals in team.iter('totals'):
+                        for statsline in totals.iter('stats'):
+                            teamStats.update({
+                                'poss': str(int(statsline.attrib.get('fga')) - int(statsline.attrib.get('oreb')) + 
+                                int(statsline.attrib.get('to')) + (.475 * int(statsline.attrib.get('fta'))))
+                            })
                 elif team.attrib.get('name') != teamName:
                     for linescore in team.iter('linescore'):
                         theirScore = linescore.attrib.get('score')
@@ -94,7 +100,7 @@ def setTeamStats():
                 })
 
 #This method updates the stats for all 31 combinations of players that are on the court
-def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
+def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins, poss):
     arr.sort()
     for num in range(5,0,-1):
         currStats = globals()['stats'+str(num)]
@@ -108,14 +114,15 @@ def updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins):
                         'stls': currStats.get(currL).get('stls') + stls if currStats.get(currL) else stls, 
                         'blks': currStats.get(currL).get('blks') + blks if currStats.get(currL) else blks, 
                         'tos': currStats.get(currL).get('tos') + tos if currStats.get(currL) else tos,
-                        'mins': currStats.get(currL).get('mins') + mins if currStats.get(currL) else mins}
+                        'mins': currStats.get(currL).get('mins') + mins if currStats.get(currL) else mins,
+                        'poss': currStats.get(currL).get('poss') + poss if currStats.get(currL) else poss}
                         })
 
 #This method goes through every play of the play-by-play and increments all of the stats as they happen
 def parseGame(root):
     arr = getStarters(root)
     myTeam = getMyTeam(root)
-    pts = ptsa = rebs = asts = stls = blks = tos = 0
+    pts = ptsa = rebs = asts = stls = blks = tos = poss = 0
     dontSub = 0
     for period in root.iter('period'):
         lastSub = period.attrib.get('time')
@@ -130,12 +137,23 @@ def parseGame(root):
             if action == 'GOOD':
                 if team == myTeam:
                     pts += getNumPoints(typePlay)
+                    if typePlay == 'FT':
+                        poss += .475
+                    else:
+                        poss += 1
                 else:
                     ptsa += getNumPoints(typePlay)
+            elif action == 'MISS' and team == myTeam:
+                if typePlay == 'FT':
+                    poss += .475
+                else:
+                    poss += 1
             elif team == myTeam:
                 if action == 'REBOUND':
                     if typePlay != 'DEADB':
                         rebs += 1
+                    elif typePlay == 'OFF':
+                        poss -= 1
                 elif action == 'ASSIST':
                     asts += 1
                 elif action == 'STEAL':
@@ -144,12 +162,13 @@ def parseGame(root):
                     blks += 1
                 elif action == 'TURNOVER':
                     tos += 1
+                    poss += 1
                 elif action == 'SUB':
                     uni = int(play.attrib.get('uni'))
                     if dontSub == 0:
                         mins = datetime.strptime(lastSub, '%M:%S') - datetime.strptime(timeNow, '%M:%S')
                         lastSub = timeNow
-                        updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
+                        updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins, poss)
                         pts = ptsa = rebs = asts = stls = blks = tos = 0
                     if typePlay == 'IN':
                         dontSub += 1
@@ -158,8 +177,8 @@ def parseGame(root):
                         dontSub -= 1
                         arr.remove(uni)
         mins = datetime.strptime(lastSub, '%M:%S') - datetime.strptime("00:00", '%M:%S')
-        updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins)
-        pts = ptsa = rebs = asts = stls = blks = tos = 0
+        updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins, poss)
+        pts = ptsa = rebs = asts = stls = blks = tos = poss = 0
         arr = getStarters(root)
 
 #This method uses xlsxwriter to write all of the data to the excel file and format the file
@@ -178,25 +197,25 @@ def writeToExcel(stats5, stats4, stats3, stats2, stats1, playerNames, teamStats)
                    {'header': 'Player 2'}, {'header': 'Player 3'}, 
                    {'header': 'Player 4'}, {'header': 'Player 5'}, 
                    {'header': 'Efficiency', 
-                   'formula': 'ROUND((([Points]-[Pts allowed])/[Minutes])-(((' + 
+                   'formula': 'ROUND((([Points]-[Pts allowed])/[Possesions])-(((' + 
                                 teamStats.get('scored') + '-[Points])-(' + 
                                 teamStats.get('allowed') + '-[Pts allowed]))/(' +
-                                teamStats.get('minutes') + '-[Minutes])),2)',
+                                teamStats.get('poss') + '-[Possesions])),2)',
                     'format': center}, 
                    {'header': 'Points'}, {'header': 'Pts allowed'},
                    {'header': 'Rebs'}, {'header': 'Assists'}, 
                    {'header': 'Steals'}, {'header': 'Blocks'}, 
-                   {'header': 'TOs'}, {'header': 'Minutes'}, 
-                   {'header': 'Points/min', 'formula': 'ROUND([Points]/[Minutes],2)', 'format': center},
-                   {'header': 'Pts allowed/min',
-                    'formula':'ROUND([Pts allowed]/[Minutes],2)','format':center}, 
-                   {'header': 'Rebs/min', 
-                    'formula': 'ROUND([Rebs]/[Minutes],2)', 'format': center}, 
-                   {'header': 'Assists/min', 
-                    'formula': 'ROUND([Assists]/[Minutes],2)', 'format': center}, 
-                   {'header': 'Steals/min', 'formula': 'ROUND([Steals]/[Minutes],2)', 'format': center}, 
-                   {'header': 'Blocks/min', 'formula': 'ROUND([Blocks]/[Minutes],2)', 'format': center}, 
-                   {'header': 'TOs/min', 'formula': 'ROUND([TOs]/[Minutes],2)', 'format': center}]
+                   {'header': 'TOs'}, {'header': 'Minutes'}, {'header': 'Possesions'},
+                   {'header': 'Points/poss', 'formula': 'ROUND([Points]/[Possesions],2)', 'format': center},
+                   {'header': 'Pts allowed/poss',
+                    'formula':'ROUND([Pts allowed]/[Possesions],2)','format':center}, 
+                   {'header': 'Rebs/poss', 
+                    'formula': 'ROUND([Rebs]/[Possesions],2)', 'format': center}, 
+                   {'header': 'Assists/poss', 
+                    'formula': 'ROUND([Assists]/[Possesions],2)', 'format': center}, 
+                   {'header': 'Steals/poss', 'formula': 'ROUND([Steals]/[Possesions],2)', 'format': center}, 
+                   {'header': 'Blocks/poss', 'formula': 'ROUND([Blocks]/[Possesions],2)', 'format': center}, 
+                   {'header': 'TOs/poss', 'formula': 'ROUND([TOs]/[Possesions],2)', 'format': center}]
     for i in range(5, 0, -1):
         options = {'name': 'Table' + str(i), 'columns': columnsList}
         tableRange = 'A1:' + chr(ord('V') + i - 5) + str(len(vars()['stats' + str(i)]) + 1)
