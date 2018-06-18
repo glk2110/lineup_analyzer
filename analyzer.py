@@ -152,8 +152,8 @@ def parseGame(root):
                 if action == 'REBOUND':
                     if typePlay != 'DEADB':
                         rebs += 1
-                    elif typePlay == 'OFF':
-                        poss -= 1
+                        if typePlay == 'OFF':
+                            poss -= 1
                 elif action == 'ASSIST':
                     asts += 1
                 elif action == 'STEAL':
@@ -169,7 +169,7 @@ def parseGame(root):
                         mins = datetime.strptime(lastSub, '%M:%S') - datetime.strptime(timeNow, '%M:%S')
                         lastSub = timeNow
                         updateStats(arr, pts, ptsa, rebs, asts, stls, blks, tos, mins, poss)
-                        pts = ptsa = rebs = asts = stls = blks = tos = 0
+                        pts = ptsa = rebs = asts = stls = blks = tos = poss = 0
                     if typePlay == 'IN':
                         dontSub += 1
                         arr.append(uni)
@@ -237,14 +237,16 @@ def writeToExcel(stats5, stats4, stats3, stats2, stats1, playerNames, teamStats)
             for value in globals()['stats'+str(i)].get(lineup):
                 if column == col + 8:
                     thisMins = round(globals()['stats'+str(i)].get(lineup).get(value).total_seconds()/60, 2)
-                    worksheet.write(row, column, thisMins, rightC)
+                    worksheet.write(row, column, thisMins, center)
+                elif column == col + 9:
+                    worksheet.write(row, column, round(globals()['stats'+str(i)].get(lineup).get(value)), rightC)
                 else:
                     worksheet.write(row, column, globals()['stats'+str(i)].get(lineup).get(value), center)
                 column += 1
             row += 1
         hCol = 0
         for thing in columnsList:
-            if hCol == 0 or hCol == col - 1 or hCol == col + 8:
+            if hCol == 0 or hCol == col - 1 or hCol == col + 9:
                 worksheet.write(0, hCol, thing.get('header'), b2)
             else:
                 worksheet.write(0, hCol, thing.get('header'), b1)
